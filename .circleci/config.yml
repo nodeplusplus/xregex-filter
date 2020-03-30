@@ -7,9 +7,9 @@ whitelist: &whitelist
   paths:
     - __tests__/*
     - lib/*
-    - mocks/*
     - coverage/*
-    - reports/*
+    - mocks/*
+    - reports/**/*
     - node_modules/*
     - src/*
     - .npmignore
