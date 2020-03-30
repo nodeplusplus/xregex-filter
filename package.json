@@ -11,7 +11,8 @@
     "build": "rm -rf lib && tsc -p tsconfig.build.json && cp -r src/types lib",
     "prepack": "rm -rf *.tgz && npm run build",
     "lint": "tslint -p tsconfig.build.json --fix",
-    "lint:fix": "npm run lint --fix"
+    "lint:fix": "npm run lint --fix",
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "files": [
     "lib"
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@types/jest": "^25.1.4",
     "@types/node": "^12.12.31",
+    "coveralls": "^3.0.11",
     "faker": "^4.1.0",
     "husky": "^4.2.3",
     "jest": "^25.2.0",

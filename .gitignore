@@ -109,6 +109,9 @@ dist
 # OS
 .DS_Store
 
+# Sensitive data
+.npmrc
+
 # Project
 lib
 coverage
