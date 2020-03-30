@@ -2,10 +2,12 @@ import faker from "faker";
 import moment from "moment";
 
 import parseDatetime, {
-  IXFilterFunctionParseDatetimeOpts
+  IXFilterFunctionParseDatetimeOpts,
 } from "../../../src/filters/parseDatetime";
 
 describe("filters.parseDatetime", () => {
+  const timezone = moment().format("Z");
+
   it("should return input payload if its not truthy value", () => {
     expect(parseDatetime("")).toBe("");
     expect(parseDatetime()).toBeUndefined();
@@ -42,7 +44,7 @@ describe("filters.parseDatetime", () => {
       month: 0 /*month is zero base*/,
       day: 22,
       hour: 13,
-      minute: 31
+      minute: 31,
     };
     const payload = `${date.day}/${date.month + 1}/${date.year} ${date.hour}:${
       date.minute
@@ -50,13 +52,13 @@ describe("filters.parseDatetime", () => {
     const opts: IXFilterFunctionParseDatetimeOpts = {
       match: {
         pattern: "(\\d+)/(\\d+)/(\\d+) (\\d+):(\\d+)",
-        replace: "$3-$2-$1 $4:$5:00 +07:00",
-        format: "YYYY-M-DD HH:mm:ss Z"
+        replace: `$3-$2-$1 $4:$5:00 ${timezone}`,
+        format: "YYYY-M-DD HH:mm:ss Z",
       },
       relative: {
         pattern: "(\\d+) (.*)",
-        unitsMap: { "giờ trước": "m" }
-      }
+        unitsMap: { "giờ trước": "m" },
+      },
     };
 
     const expected = moment(
@@ -76,13 +78,13 @@ describe("filters.parseDatetime", () => {
     const opts: IXFilterFunctionParseDatetimeOpts = {
       match: {
         pattern: "(\\d+)/(\\d+)/(\\d+) (\\d+):(\\d+)",
-        replace: "$3-$2-$1 $4:$5:00 +07:00",
-        format: "YYYY-M-DD HH:mm:ss Z"
+        replace: `$3-$2-$1 $4:$5:00 ${timezone}`,
+        format: "YYYY-M-DD HH:mm:ss Z",
       },
       relative: {
         pattern: "(\\d+) (.*)",
-        unitsMap: { [unitKey]: unitValue }
-      }
+        unitsMap: { [unitKey]: unitValue },
+      },
     };
 
     const expected = moment().subtract(value, unitValue);
@@ -96,13 +98,13 @@ describe("filters.parseDatetime", () => {
     const opts: IXFilterFunctionParseDatetimeOpts = {
       match: {
         pattern: "(\\d+)/(\\d+)/(\\d+) (\\d+):(\\d+)",
-        replace: "$3-$2-$1 $4:$5:00 +07:00",
-        format: "YYYY-M-DD HH:mm:ss Z"
+        replace: `$3-$2-$1 $4:$5:00 ${timezone}`,
+        format: "YYYY-M-DD HH:mm:ss Z",
       },
       relative: {
         pattern: "(\\d+) (.*)",
-        unitsMap: { "giờ trước": "m" }
-      }
+        unitsMap: { "giờ trước": "m" },
+      },
     };
 
     expect(parseDatetime(payload)).toBe(payload);
