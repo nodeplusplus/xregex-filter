@@ -10,7 +10,7 @@
     "test:coverage:ci": "jest --runInBand --forceExit --reporters=default --reporters=jest-junit -ci __tests__",
     "build": "rm -rf lib && tsc -p tsconfig.build.json && cp -r src/types lib",
     "prepack": "rm -rf *.tgz && npm run build",
-    "lint": "tslint -p tsconfig.build.json --fix",
+    "lint": "tslint -p tsconfig.build.json",
     "lint:fix": "npm run lint --fix",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },

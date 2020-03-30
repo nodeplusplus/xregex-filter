@@ -5,19 +5,22 @@ defaults: &defaults
 
 whitelist: &whitelist
   paths:
-    - .npmignore
+    - __tests__/*
+    - lib/*
     - coverage/*
-    - dist/*
+    - reports/*
     - node_modules/*
     - src/*
-    - test/*
-    - CODE_OF_CONDUCT.md
-    - LICENSE.md
+    - .npmignore
+    - LICENSE
     - package.json
     - README.md
     - tsconfig.json
+    - tsconfig.build.json
     - tslint.json
+
 version: 2
+
 jobs:
   checkout:
     <<: *defaults
