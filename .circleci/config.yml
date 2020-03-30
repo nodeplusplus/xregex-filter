@@ -86,7 +86,7 @@ jobs:
 
       - run:
           name: Submit coverage report to Coveralls.io
-          command: npm run coveralls
+          command: ls -la coverage && npm run coveralls
 
   build:
     <<: *defaults
