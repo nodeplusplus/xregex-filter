@@ -14,10 +14,7 @@ const parseRelativeTime: IXFilterFunction<
   if (!opts || !opts.pattern) return payload;
 
   // Cleanup first
-  const datetime = payload
-    .toLowerCase()
-    .trim()
-    .replace(/\s\s+/g, " ");
+  const datetime = payload.toLowerCase().trim().replace(/\s\s+/g, " ");
   if (!datetime) return payload;
 
   const { pattern, unitsMap } = opts;

@@ -7,10 +7,7 @@ const md5: IXFilterFunction<string, any> = function md5(payload: any): string {
     return payload;
   }
 
-  return crypto
-    .createHash("md5")
-    .update(payload)
-    .digest("hex");
+  return crypto.createHash("md5").update(payload).digest("hex");
 };
 
 export default md5;

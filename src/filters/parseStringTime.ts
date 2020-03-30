@@ -14,10 +14,7 @@ const parseStringTime: IXFilterFunction<
   if (!opts || !opts.pattern || !opts.replace) return payload;
 
   // Cleanup first
-  const datetime = payload
-    .toLowerCase()
-    .trim()
-    .replace(/\s\s+/g, " ");
+  const datetime = payload.toLowerCase().trim().replace(/\s\s+/g, " ");
   if (!datetime) return payload;
 
   const { pattern, replace, format, locale } = opts;

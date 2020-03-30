@@ -13,7 +13,7 @@ const createArrayOfProp: IXFilterFunction<
   const prop = opts?.prop;
   if (!Array.isArray(payload) || !payload.length || !prop) return payload;
 
-  return payload.map(p => _.get(p, prop)).filter(Boolean);
+  return payload.map((p) => _.get(p, prop)).filter(Boolean);
 };
 
 export default createArrayOfProp;

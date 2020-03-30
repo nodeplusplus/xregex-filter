@@ -4,10 +4,10 @@ import { IXFilterFunction } from "../types/XFilter";
 
 import parseUnixTime from "./parseUnixTime";
 import parseStringTime, {
-  IXFilterFunctionParseStringTimeOpts
+  IXFilterFunctionParseStringTimeOpts,
 } from "./parseStringTime";
 import parseRelativeTime, {
-  IXFilterFunctionParseRelativeTimeOpts
+  IXFilterFunctionParseRelativeTimeOpts,
 } from "./parseRelativeTime";
 
 const parseDatetime: IXFilterFunction<

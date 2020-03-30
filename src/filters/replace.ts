@@ -26,7 +26,10 @@ const replace: IXFilterFunction<
     const hashPattern = Object.keys(hash)
       .sort((prev, cur) => cur.length - prev.length)
       .join("|");
-    result = result.replace(new RegExp(hashPattern), matched => hash[matched]);
+    result = result.replace(
+      new RegExp(hashPattern),
+      (matched) => hash[matched]
+    );
   }
 
   if (pattern && replacement) {
