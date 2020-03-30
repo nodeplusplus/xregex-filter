@@ -1,21 +1,8 @@
 module.exports = {
   transform: {
-    "^.+\\.ts?$": "ts-jest"
+    "^.+\\.ts?$": "ts-jest",
   },
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*test.ts",
-    "!src/**/*.d.ts",
-    "!src/**/index.ts",
-    "!src/**/*.data.ts",
-    "!src/**/metadata.ts",
-    "!src/**/settings.ts",
-    "!src/**/created.ts",
-    "!src/**/started.ts",
-    "!src/**/stopped.ts",
-    "!src/**/*.js",
-    "!src/commands-usages/*"
-  ],
+  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/index.ts"],
   testEnvironment: "node",
-  setupFilesAfterEnv: ["./jest.setup.js"]
+  setupFilesAfterEnv: ["./jest.setup.js"],
 };
