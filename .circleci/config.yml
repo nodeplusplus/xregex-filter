@@ -1,5 +1,5 @@
 defaults: &defaults
-  working_directory: ~/repo
+  working_directory: ~/code
   docker:
     - image: circleci/node:12.16.1
 
@@ -46,7 +46,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/code
           <<: *whitelist
 
   lint:
@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/code
 
       - run:
           name: Lint TypeScript code
@@ -65,7 +65,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/code
 
       - run:
           name: Test TypeScript code
@@ -74,7 +74,7 @@ jobs:
             JEST_JUNIT_OUTPUT_DIR: "reports/junit/js-test-results.xml"
 
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/code
           <<: *whitelist
 
   coveralls:
@@ -82,7 +82,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/code
 
       - run:
           name: Submit coverage report to Coveralls.io
@@ -93,14 +93,14 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/code
 
       - run:
           name: Build TypeScript code
           command: npm run build
 
       - persist_to_workspace:
-          root: ~/repo
+          root: ~/code
           <<: *whitelist
 
   deploy:
@@ -108,7 +108,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/code
 
       - run:
           name: Write NPM Token to ~/.npmrc
