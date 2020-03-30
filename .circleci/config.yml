@@ -12,6 +12,8 @@ whitelist: &whitelist
     - node_modules/*
     - src/*
     - .npmignore
+    - jest.config.js
+    - jest.setup.js
     - LICENSE
     - package.json
     - README.md
@@ -67,6 +69,8 @@ jobs:
       - run:
           name: Test TypeScript code
           command: npm run test:coverage:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: "reports/junit/js-test-results.xml"
 
       - persist_to_workspace:
           root: ~/repo
