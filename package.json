@@ -7,7 +7,7 @@
     "test": "npm run test:e2e",
     "test:e2e": "jest --runInBand --forceExit __tests__/e2e",
     "test:coverage": "jest --runInBand --forceExit --coverage __tests__",
-    "test:reports": "jest --runInBand --forceExit --reporters=default --reporters=jest-junit -ci __tests__",
+    "test:coverage:ci": "jest --runInBand --forceExit --reporters=default --reporters=jest-junit --coverage -ci __tests__",
     "build": "rm -rf lib && tsc -p tsconfig.build.json && cp -r src/types lib",
     "prepack": "rm -rf *.tgz && npm run build",
     "lint": "tslint -p tsconfig.build.json",

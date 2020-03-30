@@ -9,6 +9,7 @@ whitelist: &whitelist
     - lib/*
     - coverage/*
     - mocks/*
+    - reports/*
     - node_modules/*
     - src/*
     - .npmignore
@@ -67,17 +68,13 @@ jobs:
           at: ~/code
 
       - run:
-          name: Test with coverage
-          command: npm run test:coverage
-
-      - run:
-          name: Generate test reports
-          command: npm run test:reports
+          name: Test TypeScript code
+          command: npm run test:coverage:ci
           environment:
-            JEST_JUNIT_OUTPUT_DIR: "coverage/junit.xml"
+            JEST_JUNIT_OUTPUT_DIR: "reports"
 
       - store_test_results:
-          path: "coverage/junit.xml"
+          path: "reports/junit.xml"
 
       - persist_to_workspace:
           root: ~/code
