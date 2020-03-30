@@ -60,13 +60,18 @@ describe("filters.parseStringTime", () => {
 
   it("should using format and locale", () => {
     const date = faker.date.recent();
-    const payload = `${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+    const dateProps = {
+      date: String(date.getDate()).padStart(2, "0"),
+      month: String(date.getMonth() + 1),
+      year: String(date.getFullYear()),
+      hours: String(date.getHours()).padStart(2, "0"),
+      minutes: String(date.getMinutes()).padStart(2, "0"),
+    };
+    const payload = `${dateProps.date}/${dateProps.month}/${dateProps.year} ${dateProps.hours}:${dateProps.minutes}`;
     const opts: IXFilterFunctionParseStringTimeOpts = {
       pattern: "(\\d+)/(\\d+)/(\\d+) (\\d+):(\\d+)",
       replace: `$3-$2-$1 $4:$5:00 ${timezone}`,
-      format: "YYYY-M-DD HH:mm:ss Z",
+      format: ["YYYY-MM-DD HH:mm:ss Z", "YYYY-M-DD HH:mm:ss Z"],
     };
 
     const expected = moment(date);
