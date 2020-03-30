@@ -67,8 +67,12 @@ jobs:
           at: ~/code
 
       - run:
-          name: Test TypeScript code
-          command: npm run test:coverage:ci
+          name: Test with coverage
+          command: npm run test:coverage
+
+      - run:
+          name: Generate test reports
+          command: npm run test:reports
           environment:
             JEST_JUNIT_OUTPUT_DIR: "coverage/junit.xml"
 
