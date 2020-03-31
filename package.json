@@ -20,7 +20,7 @@
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git@xregex-filter:nodeplusplus/xregex-filter.git"
+    "url": "git@github.com:nodeplusplus/xregex-filter.git"
   },
   "keywords": [
     "etl"
