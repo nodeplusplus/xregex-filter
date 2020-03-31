@@ -132,7 +132,7 @@ jobs:
 workflows:
   version: 2
 
-  build:
+  test:
     jobs:
       - checkout
       - test:
@@ -144,10 +144,6 @@ workflows:
       - coveralls:
           requires:
             - test
-      - build:
-          requires:
-            - test
-            - lint
 
   release:
     jobs:
