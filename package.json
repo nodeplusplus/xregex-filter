@@ -4,7 +4,7 @@
   "description": "Filter your data by JSON schema",
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run test:e2e",
+    "test": "jest",
     "test:e2e": "jest --runInBand --forceExit __tests__/e2e",
     "test:coverage": "jest --runInBand --forceExit --coverage __tests__",
     "test:coverage:ci": "jest --runInBand --forceExit --reporters=default --reporters=jest-junit --coverage -ci __tests__",
