@@ -17,7 +17,7 @@ describe("filters.replace", () => {
     chín: "9",
     mười: "10",
     "mười một": "11",
-    "mười hai": "12"
+    "mười hai": "12",
   };
   const pattern = ` giờ trước`;
   const ref = { $context: { id: faker.random.uuid() } };

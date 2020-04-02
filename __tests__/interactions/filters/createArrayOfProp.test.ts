@@ -1,7 +1,7 @@
 import faker from "faker";
 
 import createArrayOfProp, {
-  IXFilterFunctionCreateArrayOfPropOpts
+  IXFilterFunctionCreateArrayOfPropOpts,
 } from "../../../src/filters/createArrayOfProp";
 
 describe("filters.createArrayOfProp", () => {
@@ -20,11 +20,11 @@ describe("filters.createArrayOfProp", () => {
   it("should return array of propeties from array of object", () => {
     const words = faker.random.words().split(" ");
     const payload = words
-      .map(word => ({ word } as any))
+      .map((word) => ({ word } as any))
       // should filter falsy value as well
       .concat(null);
     const opts: IXFilterFunctionCreateArrayOfPropOpts = {
-      prop: "word"
+      prop: "word",
     };
 
     expect(createArrayOfProp(payload, opts)).toEqual(words);

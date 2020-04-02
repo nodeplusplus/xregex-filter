@@ -18,7 +18,7 @@ describe("filters.JSONParse", () => {
   it("should return object from json string", () => {
     const payload = {
       id: faker.random.uuid(),
-      priority: faker.random.number()
+      priority: faker.random.number(),
     };
 
     expect(JSONParse(JSON.stringify(payload))).toEqual(payload);

@@ -11,7 +11,7 @@ describe("filters.toNumber", () => {
   it("should return default value if transformed number is invalid", () => {
     const payload = "not-valid";
     const opts: { defaultValue: number } = {
-      defaultValue: faker.random.number(100)
+      defaultValue: faker.random.number(100),
     };
     expect(toNumber(payload, opts)).toBe(opts.defaultValue);
   });

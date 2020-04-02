@@ -24,7 +24,7 @@ describe("filters.parseUnixTime", () => {
   it("should parse millisecond time successfully", () => {
     const payload = faker.random.number({
       min: 1000000000000,
-      max: 9999999999999
+      max: 9999999999999,
     });
     expect(parseUnixTime(payload)).toBe(
       moment.unix(Math.round(payload / 1000)).toISOString()
