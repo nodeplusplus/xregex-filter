@@ -1,15 +1,17 @@
 import _ from "lodash";
 import faker from "faker";
 import { Container } from "inversify";
+import {
+  ILogger,
+  createSilent as createLogger,
+} from "@nodeplusplus/xregex-logger";
 
 import XFilter, {
   IXFilter,
-  ILogger,
   ISettings,
   ISettingsFilters,
   IXFilterExecOpts,
 } from "../../src";
-const logger = require("../../mocks/logger");
 
 describe("XFilter", () => {
   let xFilter: IXFilter;
@@ -35,7 +37,7 @@ describe("XFilter", () => {
   beforeAll(async () => {
     const container = new Container();
     container.bind<ISettings>("SETTINGS").toConstantValue(settings);
-    container.bind<ILogger>("LOGGER").toConstantValue(logger);
+    container.bind<ILogger>("LOGGER").toConstantValue(createLogger());
     container.bind<IXFilter>("XFILTER").to(XFilter);
 
     xFilter = container.get("XFILTER");

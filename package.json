@@ -47,6 +47,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@nodeplusplus/xregex-logger": "^1.0.0",
     "@types/lodash": "^4.14.149",
     "@types/slug": "^0.9.1",
     "inversify": "^5.0.1",
