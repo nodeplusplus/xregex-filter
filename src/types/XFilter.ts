@@ -29,7 +29,7 @@ export interface IXFilterSchemaItem<O = any> {
 }
 
 export interface ISettings {
-  XFilter?: { filters?: ISettingsFilters };
+  directories?: string[];
 }
 export type ISettingsFilters = { [name: string]: IXFilterFunction };
 

@@ -1,3 +1,4 @@
+import path from "path";
 import _ from "lodash";
 import faker from "faker";
 import { Container } from "inversify";
@@ -6,61 +7,45 @@ import {
   createSilent as createLogger,
 } from "@nodeplusplus/xregex-logger";
 
-import XFilter, {
-  IXFilter,
-  ISettings,
-  ISettingsFilters,
-  IXFilterExecOpts,
-} from "../../src";
+import XFilter, { IXFilter, ISettings, IXFilterExecOpts } from "../../src";
 
 describe("XFilter", () => {
-  let xFilter: IXFilter;
   const settings: ISettings = {
-    XFilter: {
-      filters: {
-        "test.callMock": jest.fn(),
-        "test.toURL": jest.fn(
-          (url: any, opts: any) => url && new URL(url, opts.baseURL).toString()
-        ),
-        "test.trim": jest.fn((data) => String(data).trim()),
-      },
-    },
+    directories: [path.resolve(__dirname, "../../mocks/filters")],
   };
 
-  function clearMocks(filters: ISettingsFilters) {
-    const mockFuncNames = Object.keys(filters);
-    mockFuncNames.forEach((mockFuncName) =>
-      (filters[mockFuncName] as jest.Mock).mockClear()
-    );
-  }
-
+  const container = new Container();
+  let xFilter: IXFilter;
   beforeAll(async () => {
-    const container = new Container();
-    container.bind<ISettings>("SETTINGS").toConstantValue(settings);
+    container.bind<ISettings>("XFILTER.SETTINGS").toConstantValue(settings);
     container.bind<ILogger>("LOGGER").toConstantValue(createLogger());
-    container.bind<IXFilter>("XFILTER").to(XFilter);
 
-    xFilter = container.get("XFILTER");
+    xFilter = container.resolve<IXFilter>(XFilter);
     await xFilter.start();
   });
   afterAll(async () => {
     await xFilter.stop();
   });
-  beforeEach(() => {
-    // Clear mock functions
-    const filters = settings.XFilter?.filters as ISettingsFilters;
-    clearMocks(filters);
-  });
 
-  it("should start with both buit-in and custom filters", () => {
-    const customFiltersIds = Object.keys(
-      settings.XFilter?.filters as ISettingsFilters
-    );
-    const filtersIds = Object.keys(xFilter.filters);
+  describe("start/stop", () => {
+    it("should start with both buit-in and custom filters", () => {
+      const filtersIds = Object.keys(xFilter.filters);
+      const customFilterids = filtersIds.filter((id) => id.startsWith("test"));
+      expect(customFilterids.length).toBeTruthy();
+    });
 
-    customFiltersIds.forEach((customFiltersId) =>
-      expect(filtersIds.includes(customFiltersId))
-    );
+    it("should only start with buit-in filters", async () => {
+      container.rebind<ISettings>("XFILTER.SETTINGS").toConstantValue({});
+
+      const _xFilter = container.resolve<IXFilter>(XFilter);
+      await _xFilter.start();
+
+      const filtersIds = Object.keys(_xFilter.filters);
+      const customFilterids = filtersIds.filter((id) => id.startsWith("test"));
+      expect(customFilterids.length).toBeFalsy();
+
+      await _xFilter.stop();
+    });
   });
 
   describe("call", () => {
@@ -72,16 +57,13 @@ describe("XFilter", () => {
       expect(result).toEqual(payload);
     });
 
-    it("should call filter by id", async () => {
-      const filters = settings.XFilter?.filters as ISettingsFilters;
+    it("should call filter by their id", async () => {
       const payload = faker.internet.url();
       const opts = { baseURL: faker.internet.domainName() };
       const ref = { $now: faker.date.recent() };
 
-      await xFilter.call("test.callMock", payload, opts, ref);
-      expect(filters["test.callMock"]).toBeCalledTimes(1);
-      expect(filters["test.callMock"]).toBeCalledWith(payload, opts, ref);
-      clearMocks(filters);
+      const response = await xFilter.call("test.ping", payload, opts, ref);
+      expect(response).toBe("pong");
     });
   });
 
@@ -99,12 +81,12 @@ describe("XFilter", () => {
     const opts: IXFilterExecOpts = {
       schema: {
         url: [
-          { id: "test.trim", priority: 10 },
-          { id: "test.toURL", priority: 1, opts: { baseURL } },
+          { id: "string.trim", priority: 10 },
+          { id: "url.format", priority: 1, opts: { baseURL } },
         ],
-        likes: [{ id: "filter.toNumber", priority: 1 }],
-        shares: [{ id: "filter.toNumber", priority: 1 }],
-        comments: [{ id: "filter.set", priority: 1, opts: { value: 1 } }],
+        likes: [{ id: "any.toNumber", priority: 1 }],
+        shares: [{ id: "any.toNumber", priority: 1 }],
+        comments: [{ id: "any.set", priority: 1, opts: { value: 1 } }],
       },
     };
 
@@ -138,7 +120,7 @@ describe("XFilter", () => {
           // witth no id
           id: [{ priority: 1 }],
           // with no priority
-          url: [{ id: "filter.url" }],
+          url: [{ id: "url.format" }],
           // with no id
           shares: [null],
         },

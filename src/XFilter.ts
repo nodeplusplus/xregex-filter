@@ -1,5 +1,6 @@
+import path from "path";
 import _ from "lodash";
-import { injectable, inject } from "inversify";
+import { injectable, inject, optional } from "inversify";
 import { ILogger } from "@nodeplusplus/xregex-logger";
 
 import { GenericObject } from "./types/Common";
@@ -11,21 +12,29 @@ import {
   IXFilterSchema,
   IXFilterSchemaItem,
 } from "./types/XFilter";
-import filters from "./filters";
+import { Loader } from "./Loader";
 
 @injectable()
 export class XFilter implements IXFilter {
-  @inject("SETTINGS") private settings!: ISettings;
   @inject("LOGGER") private logger!: ILogger;
 
+  private settings: ISettings;
+  private loader: Loader;
   public filters!: ISettingsFilters;
 
+  constructor(@inject("XFILTER.SETTINGS") @optional() settings: ISettings) {
+    this.settings = { ...settings };
+    this.loader = new Loader();
+  }
+
   public async start() {
-    /* istanbul ignore next */
-    this.filters = Object.freeze({
-      ...filters,
-      ...this.settings?.XFilter?.filters,
-    });
+    this.loader.add(path.resolve(__dirname, "filters"));
+    if (Array.isArray(this.settings.directories)) {
+      this.loader.add(...this.settings.directories);
+    }
+    const filters = await this.loader.run();
+    this.filters = Object.freeze(filters);
+
     this.logger.info("XFILTER:STARTED", { filters: Object.keys(this.filters) });
   }
 
