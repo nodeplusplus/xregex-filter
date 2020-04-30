@@ -1,6 +1,6 @@
 {
   "name": "@nodeplusplus/xregex-filter",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Filter your data by JSON schema",
   "main": "lib/index.js",
   "scripts": {
