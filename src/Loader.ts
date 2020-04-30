@@ -21,7 +21,11 @@ export class Loader {
 
   async run(): Promise<{ [name: string]: IXFilterFunction }> {
     const directories = Array.from(this.directories);
-    const globOpts = { expandDirectories: { extensions: ["js", "ts"] } };
+    const globOpts = {
+      expandDirectories: {
+        files: ["*.js", "*.ts", "!*.d.ts"],
+      },
+    };
     const filterPaths = await globby(directories, globOpts);
 
     const filters: { [name: string]: IXFilterFunction } = {};
