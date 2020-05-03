@@ -38,15 +38,15 @@ describe("string.replace", () => {
 
   it("should replace with both hash and pattern", () => {
     const payload = `${_.invert(hash)[hour].toUpperCase()}${pattern}`;
-    const replacevalue = "h";
+    const replaceValue = "h";
 
     const result = replace(
       payload,
-      { hash, pattern, replacement: replacevalue },
+      { hash, pattern, value: replaceValue },
       ref
     );
 
-    expect(result).toBe(`${hour}${replacevalue}`);
+    expect(result).toBe(`${hour}${replaceValue}`);
   });
 
   it("should return replace value with reference", () => {
@@ -54,7 +54,7 @@ describe("string.replace", () => {
 
     const result = replace(
       payload,
-      { hash, pattern, replacement: "$context.id" },
+      { hash, pattern, value: "$context.id" },
       ref
     );
     expect(result).toBe(`${hour}${ref.$context.id}`);
@@ -65,7 +65,7 @@ describe("string.replace", () => {
 
     const result = replace(
       payload,
-      { hash, pattern, replacement: "$context.name" },
+      { hash, pattern, value: "$context.name" },
       ref
     );
     expect(result).toBe(`${hour}${pattern}`);
@@ -73,13 +73,26 @@ describe("string.replace", () => {
 
   it("should replace with normal relace value", () => {
     const payload = `${_.invert(hash)[hour].toUpperCase()}${pattern}`;
-    const replacevalue = "h";
+    const replaceValue = "h";
 
     const result = replace(
       payload,
-      { hash, pattern: "(\\d+)(.*)", replacement: `$1${replacevalue}` },
+      { hash, pattern: "(\\d+)(.*)", value: `$1${replaceValue}` },
       ref
     );
-    expect(result).toBe(`${hour}${replacevalue}`);
+    expect(result).toBe(`${hour}${replaceValue}`);
+  });
+
+  it("should replace with pattern flags as well", () => {
+    const payload = "\n\n\n";
+    const replaceValue = "\n";
+
+    const result = replace(
+      payload,
+      { hash, pattern: "\\n\\s*\\n", patternFlags: "g", value: replaceValue },
+      ref
+    );
+
+    expect(result).toBe("\n");
   });
 });
