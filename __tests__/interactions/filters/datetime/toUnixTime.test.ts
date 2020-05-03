@@ -18,7 +18,7 @@ describe("datetime.toUnixTime", () => {
   });
 
   it("should return payload if payload is not valid datetime string", () => {
-    const payload = faker.random.alphaNumeric();
+    const payload = faker.lorem.word();
     expect(toUnixTime(payload)).toBe(payload);
   });
 
