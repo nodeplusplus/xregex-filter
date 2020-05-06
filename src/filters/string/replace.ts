@@ -41,7 +41,7 @@ const replace: IXFilterFunction<
       replaceValue = _.get(ref, value);
     }
 
-    if (replaceValue) {
+    if (typeof replaceValue !== "undefined") {
       result = result.replace(new RegExp(pattern, patternFlags), replaceValue);
     }
   }
