@@ -23,13 +23,13 @@ describe("condition.include", () => {
     // with string
     const string = faker.lorem.words();
     expect(
-      include(string, { values: [faker.random.alphaNumeric()], set: true })
+      include(string, { values: [faker.random.alphaNumeric(10)], set: true })
     ).toBe(string);
 
     // with array
     const array = faker.lorem.words().split(" ");
     expect(
-      include(array, { values: [faker.random.alphaNumeric()], set: true })
+      include(array, { values: [faker.random.alphaNumeric(10)], set: true })
     ).toBe(array);
   });
 
@@ -46,7 +46,7 @@ describe("condition.include", () => {
     const payload = [
       faker.lorem.word(),
       faker.lorem.word(),
-      faker.random.alphaNumeric(),
+      faker.random.alphaNumeric(10),
     ];
     const opts = { values: [payload[0], payload[1]], set: "$context.id" };
 
@@ -62,7 +62,7 @@ describe("condition.include", () => {
     const payload = [
       faker.lorem.word(),
       faker.lorem.word(),
-      faker.random.alphaNumeric(),
+      faker.random.alphaNumeric(10),
     ];
     const opts = { values: [payload[0], payload[1]], set: new Date() };
 
