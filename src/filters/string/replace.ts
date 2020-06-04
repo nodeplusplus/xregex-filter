@@ -12,7 +12,7 @@ const replace: IXFilterFunction<
   opts?: IXFilterFunctionReplaceOpts,
   ref?: any
 ): string {
-  const { toLowser = true, hash, pattern, replacement } = { ...opts };
+  const { toLowser = true, hash, pattern, patternFlags, value } = { ...opts };
 
   if (!payload || !["number", "string"].includes(typeof payload)) {
     return payload;
@@ -32,16 +32,17 @@ const replace: IXFilterFunction<
     );
   }
 
-  if (pattern && replacement) {
-    let replacementValue = replacement;
-    const isNormalReplaceValue = /(\$\d+)/.test(replacement);
-    // Only get ref if replacement is not $1$2 or similar
-    if (!isNormalReplaceValue && replacement.startsWith("$")) {
-      replacementValue = _.get(ref, replacement);
+  if (pattern && typeof value !== "undefined") {
+    let replaceValue = value;
+    // value could be ref value
+    const isNormalReplaceValue = /(\$\d+)/.test(value);
+    // Only get ref if value is not $1$2 or similar
+    if (!isNormalReplaceValue && value.startsWith("$")) {
+      replaceValue = _.get(ref, value);
     }
 
-    if (replacementValue) {
-      result = result.replace(new RegExp(pattern), replacementValue);
+    if (typeof replaceValue !== "undefined") {
+      result = result.replace(new RegExp(pattern, patternFlags), replaceValue);
     }
   }
 
@@ -53,5 +54,6 @@ export interface IXFilterFunctionReplaceOpts {
   toLowser?: boolean;
   hash?: GenericObject;
   pattern?: string;
-  replacement?: string;
+  patternFlags?: string;
+  value?: string;
 }
