@@ -24,14 +24,15 @@ export class XFilter implements IXFilter {
 
   constructor(@inject("XFILTER.SETTINGS") @optional() settings: ISettings) {
     this.settings = { ...settings };
-    this.loader = new Loader();
-  }
 
-  public async start() {
+    this.loader = new Loader();
     this.loader.add(path.resolve(__dirname, "filters"));
     if (Array.isArray(this.settings.directories)) {
       this.loader.add(...this.settings.directories);
     }
+  }
+
+  public async start() {
     const filters = await this.loader.run();
     this.filters = Object.freeze(filters);
 
