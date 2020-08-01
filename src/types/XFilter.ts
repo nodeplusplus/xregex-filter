@@ -1,7 +1,7 @@
 import { GenericObject } from "./Common";
 
 export interface IXFilter {
-  filters: ISettingsFilters;
+  filters: IXFilterOptionsFilters;
 
   start(opts?: any): Promise<void>;
   stop(opts?: any): Promise<void>;
@@ -28,10 +28,10 @@ export interface IXFilterSchemaItem<O = any> {
   opts?: O;
 }
 
-export interface ISettings {
+export interface IXFilterOptions {
   directories?: string[];
 }
-export type ISettingsFilters = { [name: string]: IXFilterFunction };
+export type IXFilterOptionsFilters = { [name: string]: IXFilterFunction };
 
 export interface IXFilterFunction<T = any, P = any, O = any, R = any> {
   (payload?: P, opts?: O, ref?: R): T;

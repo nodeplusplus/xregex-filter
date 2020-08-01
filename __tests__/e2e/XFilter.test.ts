@@ -1,82 +1,124 @@
 import path from "path";
 import _ from "lodash";
 import faker from "faker";
-import { Container } from "inversify";
-import {
-  ILogger,
-  createSilent as createLogger,
-} from "@nodeplusplus/xregex-logger";
+import { LoggerType } from "@nodeplusplus/xregex-logger";
 
-import XFilter, { IXFilter, ISettings, IXFilterExecOpts } from "../../src";
+import {
+  IXFilterExecOpts,
+  ITemplate,
+  Builder,
+  Director,
+  IXFilter,
+} from "../../src";
 
 describe("XFilter", () => {
-  const settings: ISettings = {
-    directories: [path.resolve(__dirname, "../../mocks/filters")],
-  };
-
-  const container = new Container();
-  let xFilter: IXFilter;
-  beforeAll(async () => {
-    container.bind<ISettings>("XFILTER.SETTINGS").toConstantValue(settings);
-    container.bind<ILogger>("LOGGER").toConstantValue(createLogger());
-
-    xFilter = container.resolve<IXFilter>(XFilter);
-    await xFilter.start();
-  });
-  afterAll(async () => {
-    await xFilter.stop();
-  });
-
   describe("start/stop", () => {
-    it("should start with both buit-in and custom filters", () => {
-      const filtersIds = Object.keys(xFilter.filters);
-      const customFilterids = filtersIds.filter((id) => id.startsWith("test"));
-      expect(customFilterids.length).toBeTruthy();
+    const template: ITemplate = {
+      logger: { type: LoggerType.SILENT },
+      XFilter: {
+        directories: [path.resolve(__dirname, "../../mocks/filters")],
+      },
+    };
+    const builder = new Builder();
+
+    it("should start/stop with custom directories successful", async () => {
+      new Director().constructFromTemplate(builder, template);
+      const xfilter = builder.getXFilter();
+
+      await xfilter.start();
+      const customFilters = Object.keys(xfilter.filters).filter((id) =>
+        id.startsWith("test")
+      );
+      expect(customFilters.length).toBeGreaterThanOrEqual(1);
+
+      await xfilter.stop();
+      expect(xfilter.filters).toBeUndefined();
     });
 
-    it("should only start with buit-in filters", async () => {
-      container.rebind<ISettings>("XFILTER.SETTINGS").toConstantValue({});
+    it("should start/stop with default filters as well", async () => {
+      new Director().constructFromTemplate(
+        builder,
+        _.omit(template, "XFilter")
+      );
+      const xfilter = builder.getXFilter();
 
-      const _xFilter = container.resolve<IXFilter>(XFilter);
-      await _xFilter.start();
+      expect(builder.getContainer().isBound("XFILTER.DIRECTORIES")).toBeFalsy();
 
-      const filtersIds = Object.keys(_xFilter.filters);
-      const customFilterids = filtersIds.filter((id) => id.startsWith("test"));
-      expect(customFilterids.length).toBeFalsy();
+      await xfilter.start();
+      expect(
+        Object.keys(xfilter.filters).some((id) => id.startsWith("test"))
+      ).toBeFalsy();
 
-      await _xFilter.stop();
+      await xfilter.stop();
+      expect(xfilter.filters).toBeUndefined();
     });
   });
 
   describe("call", () => {
-    it("should return input data if filter id is not found", async () => {
-      const nonExistFilterId = "test.nonExistFilterId";
-      const payload = { url: faker.internet.url() };
+    const template: ITemplate = {
+      logger: { type: LoggerType.SILENT },
+      XFilter: {
+        directories: [path.resolve(__dirname, "../../mocks/filters")],
+      },
+    };
 
-      const result = await xFilter.call(nonExistFilterId, payload);
-      expect(result).toEqual(payload);
+    let xfilter: IXFilter;
+    const builder = new Builder();
+    beforeAll(async () => {
+      new Director().constructFromTemplate(builder, template);
+      xfilter = builder.getXFilter();
+      await xfilter.start();
+    });
+    afterAll(async () => {
+      await xfilter.stop();
     });
 
-    it("should call filter by their id", async () => {
-      const payload = faker.internet.url();
-      const opts = { baseURL: faker.internet.domainName() };
-      const ref = { $now: faker.date.recent() };
+    it("should return original payload if id was not found", async () => {
+      const xfilter = builder.getXFilter();
 
-      const response = await xFilter.call("test.ping", payload, opts, ref);
-      expect(response).toBe("pong");
+      const id = faker.random.uuid();
+      const payload = { id: faker.random.uuid() };
+
+      expect(await xfilter.call(id, payload)).toEqual(payload);
+    });
+
+    it("should return result of filter", async () => {
+      const xfilter = builder.getXFilter();
+
+      const id = "test.ping";
+      const payload = { id: faker.random.uuid() };
+      const options = { name: faker.lorem.word() };
+      const ref = { url: faker.internet.url() };
+
+      const result = await xfilter.call(id, payload, options, ref);
+
+      expect(result).toEqual({
+        payload,
+        options,
+        ref,
+        message: "pong",
+      });
     });
   });
-
   describe("exec", () => {
-    interface IDataItem {
-      id?: string;
-      url?: string;
-      likes?: number | string;
-      shares?: number | string;
-      comments?: number | string;
-      child?: IDataItem;
-      childs?: IDataItem[];
-    }
+    const template: ITemplate = {
+      logger: { type: LoggerType.SILENT },
+      XFilter: {
+        directories: [path.resolve(__dirname, "../../mocks/filters")],
+      },
+    };
+
+    let xfilter: IXFilter;
+    const builder = new Builder();
+    beforeAll(async () => {
+      new Director().constructFromTemplate(builder, template);
+      xfilter = builder.getXFilter();
+      await xfilter.start();
+    });
+    afterAll(async () => {
+      await xfilter.stop();
+    });
+
     const baseURL = `http://${faker.internet.domainName()}`;
     const opts: IXFilterExecOpts = {
       schema: {
@@ -93,7 +135,7 @@ describe("XFilter", () => {
     it("should return input data if that is not array", async () => {
       const data = { content: faker.lorem.paragraph() } as any;
       const opts = {} as any;
-      expect(await xFilter.exec(data, opts)).toEqual(data);
+      expect(await xfilter.exec(data, opts)).toEqual(data);
     });
 
     it("should thorw error if schema is not defined", async () => {
@@ -106,7 +148,7 @@ describe("XFilter", () => {
       ];
       const opts = {} as any;
 
-      await xFilter
+      await xfilter
         .exec(data, opts)
         .catch((error: Error) =>
           expect(error.message).toEqual(expect.stringContaining("NO_SCHEMA"))
@@ -126,7 +168,7 @@ describe("XFilter", () => {
         },
       };
 
-      const results = await xFilter.exec(data, opts);
+      const results = await xfilter.exec(data, opts);
       expect(results).toEqual(data);
     });
 
@@ -148,7 +190,7 @@ describe("XFilter", () => {
         },
       };
 
-      const [first] = await xFilter.exec<IDataItem>(data, optsWithChildSchema);
+      const [first] = await xfilter.exec<IDataItem>(data, optsWithChildSchema);
 
       expect(first).toBeTruthy();
       // Make sure props were not touched
@@ -160,7 +202,7 @@ describe("XFilter", () => {
       expect(first.child?.url).not.toBe(data[0]?.child?.url);
     });
 
-    it("should filter flattern items successfully", async () => {
+    it("should filter items successfully", async () => {
       const data: IDataItem[] = [
         {
           id: faker.random.uuid(),
@@ -174,7 +216,7 @@ describe("XFilter", () => {
         },
       ];
 
-      const [first, last] = await xFilter.exec<IDataItem>(data, opts);
+      const [first, last] = await xfilter.exec<IDataItem>(data, opts);
 
       expect(first).toBeTruthy();
       expect(first.id).toBeTruthy();
@@ -226,7 +268,7 @@ describe("XFilter", () => {
         },
       };
 
-      const [first, last] = await xFilter.exec<IDataItem>(
+      const [first, last] = await xfilter.exec<IDataItem>(
         data,
         optsWithChildSchema
       );
@@ -257,3 +299,13 @@ describe("XFilter", () => {
     });
   });
 });
+
+interface IDataItem {
+  id?: string;
+  url?: string;
+  likes?: number | string;
+  shares?: number | string;
+  comments?: number | string;
+  child?: IDataItem;
+  childs?: IDataItem[];
+}

@@ -1,3 +1,3 @@
-module.exports.default = function ping() {
-  return "pong";
+module.exports.default = function ping(payload, options, ref) {
+  return { payload, options, ref, message: "pong" };
 };

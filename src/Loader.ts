@@ -37,8 +37,10 @@ export class Loader {
       const directory = path.dirname(filterPath).split(path.sep).pop();
       const name = path.parse(filterPath).name;
 
+      const filter = require(filterPath);
       const filterName = [directory, name].join(".");
-      filters[filterName] = require(filterPath).default;
+      // Support import style
+      filters[filterName] = filter.default || filter;
     }
 
     return filters;

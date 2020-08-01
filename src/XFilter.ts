@@ -5,10 +5,10 @@ import { ILogger } from "@nodeplusplus/xregex-logger";
 
 import { GenericObject } from "./types/Common";
 import {
-  ISettings,
+  IXFilterOptions,
   IXFilter,
   IXFilterExecOpts,
-  ISettingsFilters,
+  IXFilterOptionsFilters,
   IXFilterSchema,
   IXFilterSchemaItem,
 } from "./types/XFilter";
@@ -18,18 +18,15 @@ import { Loader } from "./Loader";
 export class XFilter implements IXFilter {
   @inject("LOGGER") private logger!: ILogger;
 
-  private settings: ISettings;
   private loader: Loader;
-  public filters!: ISettingsFilters;
+  public filters!: IXFilterOptionsFilters;
 
-  constructor(@inject("XFILTER.SETTINGS") @optional() settings: ISettings) {
-    this.settings = { ...settings };
-
+  constructor(
+    @inject("XFILTER.DIRECTORIES") @optional() directories?: string[]
+  ) {
     this.loader = new Loader();
     this.loader.add(path.resolve(__dirname, "filters"));
-    if (Array.isArray(this.settings.directories)) {
-      this.loader.add(...this.settings.directories);
-    }
+    if (Array.isArray(directories)) this.loader.add(...directories);
   }
 
   public async start() {
@@ -41,12 +38,13 @@ export class XFilter implements IXFilter {
 
   public async stop() {
     this.logger.info("XFILTER:STOPPED");
+    this.filters = undefined as any;
   }
 
   public async call(id: string, payload: any, opts?: any, ref?: any) {
     const filterFunc = this.filters[id];
     if (!filterFunc) {
-      this.logger.warn(`XFILTER:CALL.NOT_FOUND_ID`, { id });
+      this.logger.warn(`XFILTER:CALL.ID.NOT_FOUND`, { id });
       return payload;
     }
 
