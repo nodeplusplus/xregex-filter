@@ -6,8 +6,8 @@ import { IBuilder, IXFilter, IXFilterOptions } from "../types";
 export class Builder implements IBuilder {
   private container!: interfaces.Container;
 
-  constructor(container = new Container({ defaultScope: "Singleton" })) {
-    this.container = container;
+  constructor(container?: interfaces.Container) {
+    this.container = container || new Container({ defaultScope: "Singleton" });
   }
   setLogger(logger: ILogger) {
     if (this.container.isBound("LOGGER")) return;
