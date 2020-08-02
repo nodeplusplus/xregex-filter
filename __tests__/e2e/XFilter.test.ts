@@ -1,7 +1,7 @@
 import path from "path";
 import _ from "lodash";
 import faker from "faker";
-import { LoggerType } from "@nodeplusplus/xregex-logger";
+import { LoggerType, ILogger } from "@nodeplusplus/xregex-logger";
 
 import {
   IXFilterExecOpts,
@@ -10,6 +10,7 @@ import {
   Director,
   IXFilter,
 } from "../../src";
+import { Container } from "inversify";
 
 describe("XFilter", () => {
   describe("start/stop", () => {
@@ -19,9 +20,9 @@ describe("XFilter", () => {
         directories: [path.resolve(__dirname, "../../mocks/filters")],
       },
     };
-    const builder = new Builder();
 
     it("should start/stop with custom directories successful", async () => {
+      const builder = new Builder();
       new Director().constructFromTemplate(builder, template);
       const xfilter = builder.getXFilter();
 
@@ -36,6 +37,7 @@ describe("XFilter", () => {
     });
 
     it("should start/stop with default filters as well", async () => {
+      const builder = new Builder();
       new Director().constructFromTemplate(
         builder,
         _.omit(template, "XFilter")
@@ -100,6 +102,7 @@ describe("XFilter", () => {
       });
     });
   });
+
   describe("exec", () => {
     const template: ITemplate = {
       logger: { type: LoggerType.SILENT },
@@ -296,6 +299,34 @@ describe("XFilter", () => {
       expect(lastChild.comments).toBe(1);
 
       expect(last).toBeTruthy();
+    });
+  });
+
+  describe("3rd integration", () => {
+    it("shouldn't bind component which is bound already", () => {
+      const container = new Container();
+
+      const logger: ILogger = {
+        fatal(message: string, ...additionalProps: any[]) {},
+        error(message: string, ...additionalProps: any[]) {},
+        warn(message: string, ...additionalProps: any[]) {},
+        info(message: string, ...additionalProps: any[]) {},
+        debug(message: string, ...additionalProps: any[]) {},
+        trace(message: string, ...additionalProps: any[]) {},
+      };
+      container.bind("LOGGER").toConstantValue(logger);
+
+      const template: ITemplate = {
+        logger: { type: LoggerType.SILENT },
+        XFilter: {
+          directories: [path.resolve(__dirname, "../../mocks/filters")],
+        },
+      };
+
+      const builder = new Builder(container);
+      new Director().constructFromTemplate(builder, template);
+
+      expect(builder.getContainer().get("LOGGER")).toEqual(logger);
     });
   });
 });

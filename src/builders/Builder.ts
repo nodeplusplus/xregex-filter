@@ -6,10 +6,12 @@ import { IBuilder, IXFilter, IXFilterOptions } from "../types";
 export class Builder implements IBuilder {
   private container!: interfaces.Container;
 
-  reset() {
-    this.container = new Container({ defaultScope: "Singleton" });
+  constructor(container = new Container({ defaultScope: "Singleton" })) {
+    this.container = container;
   }
   setLogger(logger: ILogger) {
+    if (this.container.isBound("LOGGER")) return;
+
     this.container.bind<ILogger>("LOGGER").toConstantValue(logger);
   }
   setXFilter(Filter: interfaces.Newable<IXFilter>, options?: IXFilterOptions) {

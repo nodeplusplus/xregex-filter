@@ -5,7 +5,6 @@ import { ITemplate } from "./Template";
 import { IXFilter, IXFilterOptions } from "./XFilter";
 
 export interface IBuilder {
-  reset(): void;
   setLogger(logger: ILogger): void;
   setXFilter(
     Filter: interfaces.Newable<IXFilter>,
