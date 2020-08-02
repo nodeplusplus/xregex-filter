@@ -50,11 +50,13 @@
   "dependencies": {
     "@nodeplusplus/xregex-logger": "^1.0.0",
     "@types/lodash": "^4.14.149",
+    "@types/mustache": "^4.0.1",
     "@types/slug": "^0.9.1",
     "globby": "^11.0.0",
     "inversify": "^5.0.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "mustache": "^4.0.1",
     "reflect-metadata": "^0.1.13",
     "slug": "^2.1.1",
     "tslib": "^1.11.1"

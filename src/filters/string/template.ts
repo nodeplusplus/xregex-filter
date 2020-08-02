@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { render } from "mustache";
 
 import { IXFilterFunction } from "../../types/XFilter";
 
@@ -13,7 +13,7 @@ const template: IXFilterFunction<
 ): string {
   if (!opts?.template) return payload;
 
-  return _.template(opts.template)({ $data: payload, ...ref });
+  return render(opts.template, { $data: payload, ...ref });
 };
 
 export default template;

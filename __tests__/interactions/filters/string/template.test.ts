@@ -15,7 +15,7 @@ describe("string.template", () => {
     const ref: any = { $context: { payload: { id: faker.random.uuid() } } };
     const url = `htps://${faker.internet.domainName()}`;
     const opts = {
-      template: `${url}/<%- $context.payload.id %>/<%- $data %>`,
+      template: `${url}/{{$context.payload.id}}/{{$data}}`,
     };
 
     expect(template(payload, opts, ref)).toBe(
